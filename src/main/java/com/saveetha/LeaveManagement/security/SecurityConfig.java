@@ -90,6 +90,7 @@ public class SecurityConfig {
 
 						.requestMatchers(HttpMethod.GET, "/api/notifications/{empId}").authenticated()
 						.requestMatchers(HttpMethod.POST, "/api/leave").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/leave-request/search").hasAuthority("ADMIN")
 						.requestMatchers(HttpMethod.POST, "/api/leave/apply").hasAnyAuthority("EMPLOYEE", "ADMIN")
 
 						.requestMatchers(HttpMethod.POST,"/api/leave-balance/{empId}").hasAuthority("ADMIN")

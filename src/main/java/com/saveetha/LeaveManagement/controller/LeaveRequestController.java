@@ -7,6 +7,8 @@ import com.saveetha.LeaveManagement.entity.LeaveRequest;
 import com.saveetha.LeaveManagement.security.JwtUtil;
 import com.saveetha.LeaveManagement.service.CloudinaryService;
 import com.saveetha.LeaveManagement.service.LeaveRequestService;
+import com.saveetha.LeaveManagement.dto.LeaveSearchFilterDTO;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,14 @@ public class LeaveRequestController {
     public ResponseEntity<List<LeaveRequestResponseDTO>> getAllLeaveRequests() {
         return ResponseEntity.ok(leaveRequestService.getAllLeaveRequests());
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/search")
+    public ResponseEntity<List<LeaveHistoryDto>> searchLeaveHistory(@RequestBody LeaveSearchFilterDTO filter) {
+        List<LeaveHistoryDto> results = leaveRequestService.searchLeaveRequests(filter);
+        return ResponseEntity.ok(results);
+    }
+
 
 
 }

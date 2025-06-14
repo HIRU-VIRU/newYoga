@@ -178,5 +178,31 @@ ORDER BY
           """,nativeQuery=true)
     List<Object[]>getLeaveHistoryForEmployee(@Param("empId") String empId);
 
+
+
+    @Query(value = """
+    SELECT lr.request_id, lt.type_name, lr.start_date, lr.end_date, lr.status, lr.reason, lr.created_at
+    FROM leave_request lr
+    JOIN leave_type lt ON lr.leave_type_id = lt.leave_type_id
+    JOIN employee e ON lr.emp_id = e.emp_id
+    WHERE (:empId IS NULL OR lr.emp_id = :empId)
+      AND (:empName IS NULL OR LOWER(e.emp_name) LIKE LOWER(CONCAT('%', :empName, '%')))
+      AND (:leaveType IS NULL OR LOWER(lt.type_name) LIKE LOWER(CONCAT('%', :leaveType, '%')))
+      AND (:leaveDate IS NULL OR (:leaveDate BETWEEN lr.start_date AND lr.end_date))
+      AND (:status IS NULL OR LOWER(lr.status) = LOWER(:status))
+      AND (:requestId IS NULL OR lr.request_id = :requestId)
+      AND lr.active = true
+    ORDER BY lr.created_at DESC
+""", nativeQuery = true)
+    List<Object[]> searchLeaveRequests(
+            @Param("empId") String empId,
+            @Param("empName") String empName,
+            @Param("leaveType") String leaveType,
+            @Param("leaveDate") LocalDate leaveDate,
+            @Param("status") String status,
+            @Param("requestId") Integer requestId
+    );
+
+
 }
 

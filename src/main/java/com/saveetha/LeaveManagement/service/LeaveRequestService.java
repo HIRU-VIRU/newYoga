@@ -3,6 +3,7 @@ package com.saveetha.LeaveManagement.service;
 import com.saveetha.LeaveManagement.dto.LeaveHistoryDto;
 import com.saveetha.LeaveManagement.dto.LeaveRequestDTO;
 import com.saveetha.LeaveManagement.dto.LeaveRequestResponseDTO;
+import com.saveetha.LeaveManagement.dto.LeaveSearchFilterDTO;
 import com.saveetha.LeaveManagement.entity.*;
 import com.saveetha.LeaveManagement.enums.AlterationType;
 import com.saveetha.LeaveManagement.enums.LeaveStatus;
@@ -207,6 +208,28 @@ public class LeaveRequestService {
         LeaveRequest leaveRequest = leaveRequestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Leave Request not found with ID: " + id));
         leaveRequestRepository.delete(leaveRequest);
+    }
+    public List<LeaveHistoryDto> searchLeaveRequests(LeaveSearchFilterDTO filter) {
+        List<Object[]> result = leaveRequestRepository.searchLeaveRequests(
+                filter.getEmpId(),
+                filter.getEmpName(),
+                filter.getLeaveType(),
+                filter.getLeaveDate(),
+                filter.getStatus(),
+                filter.getRequestId()
+        );
+
+        return result.stream()
+                .map(row -> new LeaveHistoryDto(
+                        (Integer) row[0],
+                        (String) row[1],
+                        ((java.sql.Date) row[2]).toLocalDate(),
+                        ((java.sql.Date) row[3]).toLocalDate(),
+                        (String) row[4],
+                        (String) row[5],
+                        ((java.sql.Timestamp) row[6]).toLocalDateTime()
+                ))
+                .collect(Collectors.toList());
     }
 
 }
